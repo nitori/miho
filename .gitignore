@@ -1,0 +1,8 @@
+
+venv/
+.idea/
+
+config.py
+images/*
+!images/.keep
+images.db

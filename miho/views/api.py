@@ -59,20 +59,13 @@ def upload():
     sub_hash = file_hash[0:17]
     filename = f'{sub_hash}-{width}-{height}.{extension}'
 
-    pattern = re.compile(r'^(\d{6})-(([a-f0-9]{17})-(\d+)-(\d+)\.(jpg|png|gif))$')
-
     index = 0
-    for fn in os.listdir(tmp_path.parent):
-        m = pattern.match(fn)
-        if m is None:
-            continue
-        _index = int(m.group(1))
-        _filename = m.group(2)
-        if _filename == filename:
+    for im in utils.get_images():
+        if im.filename == filename:
             tmp_path.unlink()
             img.close()
-            return jsonify(error='file already exists', fn=fn), 400
-        index = max(index, _index)
+            return jsonify(error='file already exists', fn=im.fullname), 400
+        index = max(index, im.index)
 
     index += 1
 

@@ -3,7 +3,7 @@ from flask import Flask
 
 
 def create_app(config_file) -> Flask:
-    app = Flask(__name__)
+    app = Flask(__name__, static_url_path='/images', static_folder='../images')
     app.config.from_pyfile(config_file)
     register_blueprints(app)
     return app

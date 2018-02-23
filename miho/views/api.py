@@ -21,7 +21,7 @@ def index():
     return jsonify()
 
 
-@api.route('/upload', methods=['POST', 'PUT'])
+@api.route('/upload', methods=['POST'])
 def upload():
     if 'image' not in request.files:
         return jsonify(error='nothing to upload'), 400

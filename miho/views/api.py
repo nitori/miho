@@ -6,9 +6,7 @@ import pathlib
 
 
 from flask import Blueprint, jsonify, request
-from werkzeug.datastructures import FileStorage
 from PIL import Image
-from PIL.ImageFile import ImageFile
 
 from .. import utils
 
@@ -32,7 +30,7 @@ def upload():
         if not tmp_path.exists():
             break
 
-    image: FileStorage = request.files['image']
+    image = request.files['image']
     digest = hashlib.sha256()
     with closing(image.stream) as fin, tmp_path.open('wb') as fout:
         for chunk in iter(partial(fin.read, 64 << 10), b''):
@@ -41,7 +39,7 @@ def upload():
 
     file_hash = digest.hexdigest()
 
-    img: ImageFile = Image.open(tmp_path)
+    img = Image.open(tmp_path)
     extension = {
         'jpeg': 'jpg',
         'jpg': 'jpg',

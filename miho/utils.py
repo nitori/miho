@@ -55,7 +55,7 @@ def match_to_tuple(match):
 
 def get_images() -> t.Generator[Image, None, None]:
     images_dir = get_images_dir()
-    for fn in os.listdir(images_dir):
+    for fn in os.listdir(str(images_dir)):
         m = match_image(fn)
         if m is not None:
             yield match_to_tuple(m)

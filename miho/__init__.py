@@ -8,7 +8,7 @@ from . import utils
 
 def create_app(config_file) -> Flask:
     app = Flask(__name__, static_url_path='/images', static_folder='../images')
-    app.config.from_pyfile(config_file)
+    app.config.from_pyfile(str(config_file))
     register_blueprints(app)
     return app
 

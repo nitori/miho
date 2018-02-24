@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Miho</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            padding: 0;
+            margin: 0;
+        }
+
+        .main {
+            width: 1200px;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .image-list {
+            margin: 0 -15px;
+        }
+
+        .image-list:after, .image-list:before {
+            content: "";
+            display: block;
+            clear: both;
+        }
+
+        .image-wrap {
+            float: left;
+            padding: 0 15px;
+            margin-bottom: 30px;
+            width: 20%;
+        }
+
+        .image {
+            width: 100%;
+            padding-top: 100%;
+            height: 0;
+            position: relative;
+        }
+
+        .image-shift {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .image a {
+            display: block;
+            height: 100%;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d0d0d0;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .image img {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            margin: 0 auto;
+        }
+
+        @media (max-width: 1200px) {  .image-wrap {width: 25%;}  }
+        @media (max-width: 900px) {  .image-wrap {width: 33.3333333%;}  }
+        @media (max-width: 650px) {  .image-wrap {width: 50%;}  }
+        @media (max-width: 650px) {  .image-wrap {width: 50%;}  }
+        @media (max-width: 450px) {  .image-wrap {width: 100%; float: none;}  }
+    </style>
+</head>
+<body>
+
+<div class="main">
+    <div class="image-list">
+    {% for image in images %}
+        <div class="image-wrap">
+            <div class="image">
+                <div class="image-shift">
+                    <a href="{{ url_for('static', filename=image.fullname) }}" target="_blank">
+                        <img src="{{ url_for('static', filename='thumbs/' + image.preview) }}">
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+</div>
+
+</body>
+</html>

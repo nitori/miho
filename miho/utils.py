@@ -39,6 +39,12 @@ def get_images_dir() -> pathlib.Path:
     )
 
 
+def find_by_id(image_id: int):
+    for img in get_images():
+        if img.index == image_id:
+            return img
+
+
 def match_to_tuple(match):
     return Image(
         int(match.group('index')),

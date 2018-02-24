@@ -5,7 +5,7 @@ import hashlib
 import pathlib
 
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, url_for
 from PIL import Image
 
 from .. import utils
@@ -87,15 +87,22 @@ def upload():
     t2.save(str(thumb2_path), quality=85)
     t2.close()
 
-    return jsonify(success='images/{}'.format(new_filename))
+    return jsonify(success=url_for('static', filename=new_filename, _external=True))
 
 
-@api.route('/delete/<fullname>', methods=['DELETE'])
-def delete(fullname):
+@api.route('/delete/<id_or_fullname>', methods=['DELETE'])
+def delete(id_or_fullname):
     images_dir = utils.get_images_dir()
+    if id_or_fullname.isdigit():
+        img = utils.find_by_id(int(id_or_fullname))
+    else:
+        m = utils.match_image(id_or_fullname)
+        if m is None:
+            return jsonify(error='invalid id or filename'), 400
+        img = utils.match_to_tuple(m)
 
-    m = utils.match_image(fullname)
-    img = utils.match_to_tuple(m)
+    if img is None:
+        return jsonify(error='file does not exist'), 404
 
     image_path = pathlib.Path(images_dir, img.fullname)
     preview_path = pathlib.Path(images_dir, 'thumbs', img.preview)

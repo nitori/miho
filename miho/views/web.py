@@ -14,5 +14,6 @@ def index():
 
 
 @web.route('/spinner.svg')
-def spinner():
-    return Response(render_template('spinner.svg'), mimetype='image/svg+xml')
+@web.route('/<color:color>/spinner.svg')
+def spinner(color='000'):
+    return Response(render_template('spinner.svg', color=color), mimetype='image/svg+xml')

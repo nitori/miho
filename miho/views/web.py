@@ -9,5 +9,5 @@ web = Blueprint('web', __name__)
 @web.route('/')
 def index():
     images = list(utils.get_images())
-    images.sort()
+    images.sort(reverse=True)
     return render_template('index.html', images=images)

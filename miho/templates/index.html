@@ -101,6 +101,62 @@
         @media (max-width: 650px) {  .image-wrap {width: 50%;}  }
         @media (max-width: 450px) {  .image-wrap {width: 100%; float: none;}  }
     </style>
+    <script>
+        function getAbsoluteTop(elem) {
+            let top = 0;
+            let current = elem;
+            while(current !== null) {
+                top += current.offsetTop;
+                current = current.offsetParent;
+            }
+            return top;
+        }
+
+        function between(t, a, b) {
+            if (b < a) {
+                return t >= b && t <= a;
+            }
+            return t >= a && t <= b;
+        }
+
+        function update_visible_images(){
+            let htmlCollection = document.getElementsByTagName('img');
+            let images = Array.prototype.slice.call(htmlCollection);
+
+            let windowTop = window.scrollY;
+            let windowHeight = window.innerHeight || document.body.clientHeight || document.documentElement.clientHeight;
+            let windowBottom = windowTop + windowHeight;
+
+            let padding = 0;
+
+            images.forEach(function(img){
+                if (!img.hasAttribute('data-src')) {
+                    return;
+                }
+                let dataSrc = img.getAttribute('data-src');
+                if (dataSrc === '' || !dataSrc) {
+                    return;
+                }
+                let box = img.parentElement;  // a-tag
+                let boxTop = getAbsoluteTop(box);
+                let boxHeight = box.offsetHeight;
+                let boxBottom = boxTop + boxHeight;
+
+                // partially visible
+                if (
+                    between(boxTop + padding, windowTop, windowBottom)
+                    || between(boxBottom - padding, windowTop, windowBottom)
+                ) {
+                    img.setAttribute('src', dataSrc);
+                    img.setAttribute('data-src', '');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', update_visible_images);
+        window.addEventListener('resize', update_visible_images);
+        window.addEventListener('load', update_visible_images);
+    </script>
 </head>
 <body>
 
@@ -111,7 +167,7 @@
             <div class="image">
                 <div class="image-shift">
                     <a href="{{ url_for('static', filename=image.fullname) }}" target="_blank">
-                        <img src="{{ url_for('static', filename='thumbs/' + image.preview) }}">
+                        <img src="{{ url_for('web.spinner') }}" data-src="{{ url_for('static', filename='thumbs/' + image.preview) }}">
                         <span class="image-index image-overlay">#{{ image.index }}</span>
                         <span class="image-data image-overlay">{{ image.width }}x{{ image.height }} ({{ image.ext }})</span>
                     </a>

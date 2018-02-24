@@ -48,8 +48,8 @@ def match_to_tuple(match):
         int(match.group('height')),
         match.group('ext'),
         match.group(0),
-        f"{match.group('index')}-1-{match.group('filename')}.jpg",
-        f"{match.group('index')}-2-{match.group('filename')}.jpg",
+        "{}-1-{}.jpg".format(match.group('index'), match.group('filename')),
+        "{}-2-{}.jpg".format(match.group('index'), match.group('filename')),
     )
 
 
@@ -65,8 +65,8 @@ def restrict_with_base_auth(conf_key_prefix):
     if request.authorization:
         username = request.authorization.get('username', None)
         password = request.authorization.get('password', None)
-        admin_user = current_app.config.get(f'MIHO_{conf_key_prefix}_USER', randstr(20))
-        admin_pass = current_app.config.get(f'MIHO_{conf_key_prefix}_PASS', randstr(20))
+        admin_user = current_app.config.get('MIHO_{}_USER'.format(conf_key_prefix), randstr(20))
+        admin_pass = current_app.config.get('MIHO_{}_PASS'.format(conf_key_prefix), randstr(20))
         if username == admin_user and password == admin_pass:
             return
         abort(401)

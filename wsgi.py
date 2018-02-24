@@ -13,9 +13,9 @@ app = create_app(config_file)
 @app.cli.command()
 def reset():
     images_dir = utils.get_images_dir()
-    click.confirm(f'This will delete all files in {str(images_dir)!r}. Continue?', abort=True, default=False)
+    click.confirm('This will delete all files in {!r}. Continue?'.format(str(images_dir)), abort=True, default=False)
     if images_dir.exists() and not images_dir.is_dir():
-        click.echo(f'{str(images_dir)!r} is not a directory.', err=True)
+        click.echo('{!r} is not a directory.'.format(str(images_dir)), err=True)
         return
 
     if images_dir.exists():

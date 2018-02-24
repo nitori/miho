@@ -55,7 +55,7 @@ def upload():
 
     width, height = img.size
     sub_hash = file_hash[0:17]
-    filename = f'{sub_hash}-{width}-{height}.{extension}'
+    filename = '{}-{}-{}.{}'.format(sub_hash, width, height, extension)
 
     index = 0
     for im in utils.get_images():
@@ -67,12 +67,12 @@ def upload():
 
     index += 1
 
-    new_filename = f'{index:06d}-{filename}'
+    new_filename = '{:06d}-{}'.format(index, filename)
     new_path = pathlib.Path(tmp_path.parent, new_filename)
     tmp_path.rename(new_path)
 
-    thumb1_path = pathlib.Path(new_path.parent, 'thumbs', f'{index:06d}-1-{filename}.jpg')
-    thumb2_path = pathlib.Path(new_path.parent, 'thumbs', f'{index:06d}-2-{filename}.jpg')
+    thumb1_path = pathlib.Path(new_path.parent, 'thumbs', '{:06d}-1-{}.jpg'.format(index, filename))
+    thumb2_path = pathlib.Path(new_path.parent, 'thumbs', '{:06d}-2-{}.jpg'.format(index, filename))
 
     t1 = img.convert('RGB')
     t1.thumbnail((512, 512), Image.BICUBIC)
@@ -84,7 +84,7 @@ def upload():
     t2.save(str(thumb2_path), quality=85)
     t2.close()
 
-    return jsonify(success=f'images/{new_filename}')
+    return jsonify(success='images/{}'.format(new_filename))
 
 
 @api.route('/delete/<fullname>', methods=['DELETE'])

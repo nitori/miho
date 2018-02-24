@@ -3,10 +3,9 @@ from contextlib import closing
 from functools import partial
 import hashlib
 import pathlib
-import os
-import re
 
-from flask import Blueprint, jsonify, request, current_app
+
+from flask import Blueprint, jsonify, request
 from werkzeug.datastructures import FileStorage
 from PIL import Image
 from PIL.ImageFile import ImageFile
@@ -26,11 +25,10 @@ def upload():
     if 'image' not in request.files:
         return jsonify(error='nothing to upload'), 400
 
-    root = utils.get_root()
-    images_dir = current_app.config.get('IMAGES_DIR', 'images')
+    images_dir = utils.get_images_dir()
     while True:
         tmp_file = '.' + utils.randstr(100)
-        tmp_path = pathlib.Path(root, images_dir, tmp_file)
+        tmp_path = pathlib.Path(images_dir, tmp_file)
         if not tmp_path.exists():
             break
 
@@ -87,3 +85,24 @@ def upload():
     t2.close()
 
     return jsonify(success=f'images/{new_filename}')
+
+
+@api.route('/delete/<fullname>', methods=['DELETE'])
+def delete(fullname):
+    images_dir = utils.get_images_dir()
+
+    m = utils.match_image(fullname)
+    img = utils.match_to_tuple(m)
+
+    image_path = pathlib.Path(images_dir, img.fullname)
+    preview_path = pathlib.Path(images_dir, 'thumbs', img.preview)
+    thumbnail_path = pathlib.Path(images_dir, 'thumbs', img.thumbnail)
+
+    if image_path.exists():
+        image_path.unlink()
+    if preview_path.exists():
+        preview_path.unlink()
+    if thumbnail_path.exists():
+        thumbnail_path.unlink()
+
+    return jsonify(success='file deleted')

@@ -13,4 +13,5 @@ markupsafe==1.0           # via jinja2
 pillow==5.0.0
 pip-tools==1.11.0
 six==1.11.0               # via pip-tools
+uwsgi==2.0.16
 werkzeug==0.14.1          # via flask

@@ -5,4 +5,6 @@ venv/
 config.py
 images/*
 !images/.keep
+images/thumbs/*
+!images/thumbs/.keep
 images.db

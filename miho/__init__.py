@@ -1,5 +1,9 @@
 
+from functools import partial
+
 from flask import Flask
+
+from . import utils
 
 
 def create_app(config_file) -> Flask:
@@ -12,5 +16,9 @@ def create_app(config_file) -> Flask:
 def register_blueprints(app: Flask):
     from .views.api import api
     from .views.web import web
+
+    api.before_request(partial(utils.restrict_with_base_auth, 'API'))
+    web.before_request(partial(utils.restrict_with_base_auth, 'WEB'))
+
     app.register_blueprint(web)
     app.register_blueprint(api, url_prefix='/api')

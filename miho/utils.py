@@ -7,7 +7,7 @@ import os
 import re
 from collections import namedtuple
 
-from flask import current_app
+from flask import current_app, abort, request, Response
 
 FN_PATTERN = re.compile(
     r'^(?P<index>\d{6})-(?P<filename>(?P<subhash>[a-f0-9]{17})-(?P<width>\d+)-(?P<height>\d+)\.(?P<ext>jpg|png|gif))$'
@@ -35,7 +35,21 @@ def match_image(filename):
 def get_images_dir() -> pathlib.Path:
     return pathlib.Path(
         get_root(),
-        current_app.config.get('IMAGES_DIR', 'images')
+        current_app.config.get('MIHO_IMAGES_DIR', 'images')
+    )
+
+
+def match_to_tuple(match):
+    return Image(
+        int(match.group('index')),
+        match.group('filename'),
+        match.group('subhash'),
+        int(match.group('width')),
+        int(match.group('height')),
+        match.group('ext'),
+        match.group(0),
+        f"{match.group('index')}-1-{match.group('filename')}.jpg",
+        f"{match.group('index')}-2-{match.group('filename')}.jpg",
     )
 
 
@@ -44,14 +58,21 @@ def get_images() -> t.Generator[Image, None, None]:
     for fn in os.listdir(images_dir):
         m = match_image(fn)
         if m is not None:
-            yield Image(
-                int(m.group('index')),
-                m.group('filename'),
-                m.group('subhash'),
-                int(m.group('width')),
-                int(m.group('height')),
-                m.group('ext'),
-                m.group(0),
-                f"{m.group('index')}-1-{m.group('filename')}.jpg",
-                f"{m.group('index')}-2-{m.group('filename')}.jpg",
-            )
+            yield match_to_tuple(m)
+
+
+def restrict_with_base_auth(conf_key_prefix):
+    if request.authorization:
+        username = request.authorization.get('username', None)
+        password = request.authorization.get('password', None)
+        admin_user = current_app.config.get(f'MIHO_{conf_key_prefix}_USER', randstr(20))
+        admin_pass = current_app.config.get(f'MIHO_{conf_key_prefix}_PASS', randstr(20))
+        if username == admin_user and password == admin_pass:
+            return
+        abort(401)
+    auth_response = Response(
+        'Could not verify your access level for that URL.\n'
+        'You have to login with proper credentials', 401,
+        {'WWW-Authenticate': 'Basic realm="Login Required"'}
+    )
+    abort(401, response=auth_response)

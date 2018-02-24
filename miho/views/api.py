@@ -39,7 +39,12 @@ def upload():
 
     file_hash = digest.hexdigest()
 
-    img = Image.open(tmp_path)
+    try:
+        img = Image.open(tmp_path)
+    except OSError:
+        tmp_path.unlink()
+        return jsonify(error='Invalid or unknown image format'), 400
+
     extension = {
         'jpeg': 'jpg',
         'jpg': 'jpg',

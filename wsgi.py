@@ -19,7 +19,7 @@ def reset():
         return
 
     if images_dir.exists():
-        shutil.rmtree(images_dir)
+        shutil.rmtree(str(images_dir))
 
     images_dir.mkdir(0o755, exist_ok=True)
     pathlib.Path(images_dir, 'thumbs').mkdir(0o755, exist_ok=True)

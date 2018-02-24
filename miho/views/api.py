@@ -98,11 +98,19 @@ def delete(fullname):
     preview_path = pathlib.Path(images_dir, 'thumbs', img.preview)
     thumbnail_path = pathlib.Path(images_dir, 'thumbs', img.thumbnail)
 
+    deleted_something = False
     if image_path.exists():
+        deleted_something = True
         image_path.unlink()
+
     if preview_path.exists():
+        deleted_something = True
         preview_path.unlink()
+
     if thumbnail_path.exists():
+        deleted_something = True
         thumbnail_path.unlink()
 
-    return jsonify(success='file deleted')
+    if deleted_something:
+        return jsonify(success='file deleted')
+    return jsonify(error='file does not exist'), 404

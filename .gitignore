@@ -1,6 +1,7 @@
 
 venv/
 .idea/
+*.py[co]
 
 config.py
 
